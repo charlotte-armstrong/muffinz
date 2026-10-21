@@ -35,6 +35,7 @@ def print_grades(subject):
 
 def print_all_averages():
 
+    #tracks best and worst averages
     best_avg = 0
     best_subject = ""
     worst_avg = 100
@@ -75,6 +76,7 @@ def get_GPA():
     return fourpointGPA
 
 def menu():
+    #prints menu
     print('''
 OPTIONS:
 
