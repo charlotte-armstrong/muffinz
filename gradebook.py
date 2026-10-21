@@ -100,5 +100,6 @@ OPTIONS:
     else:
         print("Invalid Input. Try again.")
 
+#main loop
 if __name__ == "__main__":
     menu()
