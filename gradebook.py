@@ -86,6 +86,7 @@ OPTIONS:
 
     choice = input("Enter your choice: ")
 
+    #translates user input to corresponding function
     if choice == "1":
         print_all_averages()
     elif choice == "2":
