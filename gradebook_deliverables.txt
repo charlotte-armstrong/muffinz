@@ -1,0 +1,13 @@
+Purpose: 
+To present a menu with several services related to a student's grades. The student will be able to choose a function from the menu and the program will run it.
+
+Expected Users:
+2 possible expected users are students and teachers. Students may use the program to navigate through their grades and track averages, and teachers may do the same.
+
+Features:
+- Non-negotiable: The user be able to navigate through the menu. This feature must be in place because otherwise the user would not be able to acess the program's functions.
+- Nice-to-have: The program converts the user's GPA from a 100 point scale to a 4.0 point scale. This is not necessary for the program's function but presents the data in a more common format, which is nice.
+
+Improvements:
+1. Being able to have separate gradebooks for separate students. This would be valuable if the gradebook were meant as a tool for teachers.
+2. A feature that allows the user to navigate back to the main menu at any time. The program would end when the user chooses to exit instead of after the chosen function runs.
