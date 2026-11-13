@@ -1,5 +1,33 @@
 #create gradebook dictionary
 from operator import sub
+import csv
+
+dict = { }
+filepath = "gradebook.csv"
+
+##READ FROM CSV
+try:
+    with open(filepath, 'r') as file:
+        data = csv.reader(file)
+
+    for row in data:
+        if row:
+            key = row[0]
+            values = row[1:]
+            dict[key] = values
+    print(dict)
+except FileNotFoundError:
+    print("File Not Found")
+
+##WRITE TO CSV
+try:
+    with open(filepath, 'w', newline="") as file:
+        writer = csv.writer(file)
+
+        for key, value in data.items():
+            writer.writerow([key] + value)
+except FileNotFoundError:
+    print("File Not Found")
 
 
 gradebook = {
