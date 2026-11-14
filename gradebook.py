@@ -1,6 +1,12 @@
 #create gradebook dictionary
-from operator import sub
 import csv
+import subprocess
+
+def clear_console():
+    command = 'clear'
+    subprocess.run(command, shell=True)
+
+clear_console()
 
 gradebook = {
     "english": [100,99,98,97],
@@ -12,9 +18,6 @@ gradebook = {
 
 gradebook_file = "/Users/carmstrong/Documents/data-science/muffinz/gradebook.csv"
 
-def success_message():
-    print(">>> Gradebook updated successfully.")
-
 ##read from csv
 def read_from_csv():
     try:
@@ -25,7 +28,6 @@ def read_from_csv():
                     subject = row[0]
                     grades = row[1:]
                     gradebook[subject] = [int(grade) for grade in grades]
-        print(gradebook)
     except FileNotFoundError:
         print("File Not Found")
 
@@ -40,33 +42,46 @@ def write_to_csv():
         print("File Not Found")
 
 #add grade to dictionary
-def add_grade(subject, grade):
+def add_grade(subject):
     subject = subject.lower()
     if subject in gradebook:
+        grade = int(input("Enter grade: "))
         gradebook[subject].append(grade)
-        success_message()
+        print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".")
+        nav_options()
     else:
         choice = input("Add grade for new subject '" + subject.capitalize() + "'? (Y/n)")
         if choice.lower() == "y":
+            grade = int(input("Enter grade: "))
             gradebook[subject] = [grade]
-            success_message()
+            print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".")
+            nav_options()
+        else:
+            nav_options()
 
 def print_average(subject):
+    clear_console()
     subject = subject.lower()
     if subject in gradebook:
         average = sum(gradebook[subject]) / len(gradebook[subject])
         print("Your average for " + subject + " is " + str(average) + "%")
+        nav_options()   
     else:
         print("No grades recorded for " + subject + ".")
+        nav_options()
 
 def print_grades(subject):
+    clear_console()
     subject = subject.lower()
     if subject in gradebook:
         print("In " + subject + ", you scored " + str(gradebook[subject]) + ".")
+        nav_options()
     else:
         print("No grades recorded for " + subject + ".")
+        nav_options()
 
 def print_all_averages():
+    clear_console()
 
     #tracks best and worst averages
     best_avg = 0
@@ -94,6 +109,8 @@ def print_all_averages():
     print("\nYour best average is " + str(best_avg) + "%, in " + best_subject)
     print("Your worst average is " + str(worst_avg) + "%, in " + worst_subject + "\n")
 
+    nav_options()
+
 def get_GPA():
     #store averages for each subject, used to calculate gross GPA
     averages = []
@@ -110,15 +127,16 @@ def get_GPA():
 
 def menu():
     #prints menu
+    clear_console()
     print('''
 OPTIONS:
 
-    1. Print out classes and averages
-    2. Print grades for specific class
-    3. Pring cumulative GPA
-    4. Add a grade for a class
-
-    ''')
+1. Print out classes and averages
+2. Print grades for specific class
+3. Pring cumulative GPA
+4. Add a grade for a class
+5. Exit
+''')
 
     choice = input("Enter your choice: ")
 
@@ -129,16 +147,43 @@ OPTIONS:
         subject = input("Enter the subject: ")
         print_grades(subject)
     elif choice == "3":
+        clear_console()
         print("Your cumulative GPA out of 4.0 is " + str(get_GPA()))
+        nav_options()
     elif choice == "4":
         subject = input("Enter subject: ")
-        grade = int(input("Enter grade: "))
-        add_grade(subject, grade)
+        add_grade(subject)
+    elif choice == "5":
+        exit_program()
     else:
-        print("Invalid Input. Try again.")
+        clear_console()
+        print("\n>>> Invalid Input. Try again.")
+        menu()
+
+def nav_options():
+    choice = input('''
+1. Return to main menu
+2. Exit program
+
+Enter your choice: ''')
+    if choice == "1":
+        menu()
+    elif choice == "2":
+        exit_program()
+    else:
+        clear_console()
+        print("\n>>> Invalid Input. Try again.")
+        nav_options()
+
+def exit_program():
+    clear_console()
+    print("\n>>> Exited program.")
+    write_to_csv()
+    return None
 
 #main loop
 if __name__ == "__main__":
     read_from_csv()
-    menu()
-    write_to_csv()
+    while True:
+        if menu() is None:
+            break
