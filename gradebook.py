@@ -2,52 +2,57 @@
 from operator import sub
 import csv
 
-dict = { }
-filepath = "gradebook.csv"
-
-##READ FROM CSV
-try:
-    with open(filepath, 'r') as file:
-        data = csv.reader(file)
-
-    for row in data:
-        if row:
-            key = row[0]
-            values = row[1:]
-            dict[key] = values
-    print(dict)
-except FileNotFoundError:
-    print("File Not Found")
-
-##WRITE TO CSV
-try:
-    with open(filepath, 'w', newline="") as file:
-        writer = csv.writer(file)
-
-        for key, value in data.items():
-            writer.writerow([key] + value)
-except FileNotFoundError:
-    print("File Not Found")
-
-
 gradebook = {
-    "Math": [67,68,69,70],
-    "Science": [75,84,90,79],
-    "English": [96,98,99,100],
-    "History": [88,85,91,87],
-    "Art": [100,99,95,100],
-    "Sex Ed": [50, 45, 32, 64]
+    "english": [100,99,98,97],
+    "math": [87,78,82,84],
+    "science": [75,84,90,79],
+    "history": [88,85,91,87],
+    "art": [100,99,95,100]
 }
+
+gradebook_file = "/Users/carmstrong/Documents/data-science/muffinz/gradebook.csv"
+
+def success_message():
+    print(">>> Gradebook updated successfully.")
+
+##read from csv
+def read_from_csv():
+    try:
+        with open(gradebook_file, 'r') as file:
+            data = csv.reader(file)
+            for row in data:
+                if row:
+                    subject = row[0]
+                    grades = row[1:]
+                    gradebook[subject] = [int(grade) for grade in grades]
+        print(gradebook)
+    except FileNotFoundError:
+        print("File Not Found")
+
+##write to csv
+def write_to_csv():
+    try:
+        with open(gradebook_file, 'w', newline="") as file:
+            writer = csv.writer(file)
+            for key, value in gradebook.items():
+                writer.writerow([key] + value)
+    except FileNotFoundError:
+        print("File Not Found")
 
 #add grade to dictionary
 def add_grade(subject, grade):
+    subject = subject.lower()
     if subject in gradebook:
         gradebook[subject].append(grade)
+        success_message()
     else:
-        gradebook[subject] = [grade]
+        choice = input("Add grade for new subject '" + subject.capitalize() + "'? (Y/n)")
+        if choice.lower() == "y":
+            gradebook[subject] = [grade]
+            success_message()
 
 def print_average(subject):
-    subject = subject.capitalize()
+    subject = subject.lower()
     if subject in gradebook:
         average = sum(gradebook[subject]) / len(gradebook[subject])
         print("Your average for " + subject + " is " + str(average) + "%")
@@ -55,7 +60,7 @@ def print_average(subject):
         print("No grades recorded for " + subject + ".")
 
 def print_grades(subject):
-    subject = subject.capitalize()
+    subject = subject.lower()
     if subject in gradebook:
         print("In " + subject + ", you scored " + str(gradebook[subject]) + ".")
     else:
@@ -112,6 +117,7 @@ OPTIONS:
     2. Print grades for specific class
     3. Pring cumulative GPA
     4. Add a grade for a class
+
     ''')
 
     choice = input("Enter your choice: ")
@@ -133,4 +139,6 @@ OPTIONS:
 
 #main loop
 if __name__ == "__main__":
+    read_from_csv()
     menu()
+    write_to_csv()
