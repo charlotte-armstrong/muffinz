@@ -19,7 +19,7 @@ def read_from_csv():
             data = csv.reader(file)
             for row in data:
                 if row:
-                    subject = row[0]
+                    subject = row[0].capitalize()
                     grades = row[1:]
                     gradebook[subject] = [int(grade) for grade in grades]
     except FileNotFoundError:
@@ -31,7 +31,7 @@ def write_to_csv():
         with open(gradebook_file, 'w', newline="") as file:
             writer = csv.writer(file)
             for key, value in gradebook.items():
-                writer.writerow([key] + value)
+                writer.writerow([key.capitalize()] + value)
     except FileNotFoundError:
         print("\n>>> File " + gradebook_file + " Not Found.\n")
 
@@ -39,16 +39,16 @@ def write_to_csv():
 def add_grade(subject):
     subject = subject.capitalize()
     if subject in gradebook:
-        grade = int_input(subject.capitalize() + " currently contains " + str(gradebook[subject]) + ". Enter new grade: ")
+        grade = int_input(subject + " currently contains " + str(gradebook[subject]) + ". Enter new grade: ")
         gradebook[subject].append(grade)
-        print("\n>>> Successfully added a " + str(grade) + " in " + subject.capitalize() + ".\n>>> " + subject.capitalize() + " now contains " + str(gradebook[subject]) + ".\n")
+        print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + str(gradebook[subject]) + ".\n")
         nav_options()
     else:
-        choice = smart_input("Add grade for new subject '" + subject.capitalize() + "'? (Y/n)")
+        choice = smart_input("Add grade for new subject '" + subject + "'? (Y/n)")
         if choice.lower() == "y":
             grade = int_input("Enter grade: ")
-            gradebook[subject.capitalize()] = [grade]
-            print("\n>>> Successfully added a " + str(grade) + " in " + subject.capitalize() + ".\n>>> " + subject.capitalize() + " now contains " + str(gradebook[subject]) + ".\n")
+            gradebook[subject] = [grade]
+            print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + str(gradebook[subject]) + ".\n")
             nav_options()
         else:
             nav_options()
@@ -56,15 +56,15 @@ def add_grade(subject):
 def remove_grade(subject):
     subject = subject.capitalize()
     if subject in gradebook:
-        grade = int(int_input("Enter grade to remove from " + str(gradebook[subject]) + " (Options: " + ", ".join(map(str, gradebook[subject])) + "): "))
+        grade = int(int_input("Enter grade to remove from " + str(gradebook[subject]) + " (Options: " + gradebook[subject] + "): "))
         if grade in gradebook[subject]:
             gradebook[subject].remove(grade)
-            print("\n>>> Successfully removed a " + str(grade) + " from " + subject.capitalize() + ".\n")
-            print(">>> " + subject.capitalize() + " now contains " + str(gradebook[subject]) + ".")
+            print("\n>>> Successfully removed a " + str(grade) + " from " + subject + ".\n")
+            print(">>> " + subject + " now contains " + str(gradebook[subject]) + ".")
         else:
-            print("\n>>> Grade not found in " + subject.capitalize() + ".\n")
+            print("\n>>> Grade not found in " + subject + ".\n")
     else:
-        print("No grades recorded for " + subject.capitalize() + ".\n")
+        print("No grades recorded for " + subject + ".\n")
     nav_options()
 
 def print_average(subject):
@@ -72,7 +72,7 @@ def print_average(subject):
     subject = subject.capitalize()
     if subject in gradebook:
         average = sum(gradebook[subject]) / len(gradebook[subject])
-        print("Your average for " + subject.capitalize() + " is " + str(average) + "%")
+        print("Your average for " + subject + " is " + str(average) + "%")
         nav_options()   
     else:
         print("No grades recorded for " + subject + ".")
@@ -82,10 +82,10 @@ def print_grades(subject):
     clear_console()
     subject = subject.capitalize()
     if subject in gradebook:
-        print("In " + subject.capitalize() + ", you scored " + ", ".join(str(gradebook[subject])) + ".")
+        print("In " + subject + ", you scored " + str(gradebook[subject]) + ".")
         nav_options()
     else:
-        print("No grades recorded for " + subject.capitalize() + ".")
+        print("No grades recorded for " + subject + ".")
         nav_options()
 
 def print_all_averages():
