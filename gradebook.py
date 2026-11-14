@@ -6,90 +6,36 @@ def clear_console():
     command = 'clear'
     subprocess.run(command, shell=True)
 
-clear_console()
-
 gradebook = { }
 
 gradebook_file = "/Users/carmstrong/Documents/data-science/muffinz/gradebook.csv"
 
-##read from csv
+#read from csv
 def read_from_csv():
     try:
         with open(gradebook_file, 'r') as file:
             data = csv.reader(file)
             for row in data:
                 if row:
-                    subject = row[0].capitalize()
+                    subject = row[0].title()
                     grades = row[1:]
                     gradebook[subject] = [int(grade) for grade in grades]
     except FileNotFoundError:
-        print("\n>>> File " + gradebook_file + " Not Found.\n")
+        menu(">>> File " + gradebook_file + " Not Found.")
 
-##write to csv
+#write to csv
 def write_to_csv():
     try:
         with open(gradebook_file, 'w', newline="") as file:
             writer = csv.writer(file)
             for key, value in gradebook.items():
-                writer.writerow([key.capitalize()] + value)
+                writer.writerow([key.title()] + value)
     except FileNotFoundError:
-        print("\n>>> File " + gradebook_file + " Not Found.\n")
+        menu(">>> File " + gradebook_file + " Not Found.")
 
-#add grade to dictionary
-def add_grade(subject):
-    subject = subject.capitalize()
-    if subject in gradebook:
-        grade = int_input(subject + " currently contains " + str(gradebook[subject]) + ". Enter new grade: ")
-        gradebook[subject].append(grade)
-        print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + str(gradebook[subject]) + ".\n")
-        nav_options()
-    else:
-        choice = smart_input("Add grade for new subject '" + subject + "'? (Y/n)")
-        if choice.lower() == "y":
-            grade = int_input("Enter grade: ")
-            gradebook[subject] = [grade]
-            print("\n>>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + str(gradebook[subject]) + ".\n")
-            nav_options()
-        else:
-            nav_options()
-
-def remove_grade(subject):
-    subject = subject.capitalize()
-    if subject in gradebook:
-        grade = int(int_input("Enter grade to remove from " + str(gradebook[subject]) + " (Options: " + gradebook[subject] + "): "))
-        if grade in gradebook[subject]:
-            gradebook[subject].remove(grade)
-            print("\n>>> Successfully removed a " + str(grade) + " from " + subject + ".\n")
-            print(">>> " + subject + " now contains " + str(gradebook[subject]) + ".")
-        else:
-            print("\n>>> Grade not found in " + subject + ".\n")
-    else:
-        print("No grades recorded for " + subject + ".\n")
-    nav_options()
-
-def print_average(subject):
-    clear_console()
-    subject = subject.capitalize()
-    if subject in gradebook:
-        average = sum(gradebook[subject]) / len(gradebook[subject])
-        print("Your average for " + subject + " is " + str(average) + "%")
-        nav_options()   
-    else:
-        print("No grades recorded for " + subject + ".")
-        nav_options()
-
-def print_grades(subject):
-    clear_console()
-    subject = subject.capitalize()
-    if subject in gradebook:
-        print("In " + subject + ", you scored " + str(gradebook[subject]) + ".")
-        nav_options()
-    else:
-        print("No grades recorded for " + subject + ".")
-        nav_options()
-
+#print all averages
 def print_all_averages():
-    clear_console()
+    header()
 
     #tracks best and worst averages
     best_avg = 0
@@ -97,7 +43,7 @@ def print_all_averages():
     worst_avg = 100
     worst_subject = ""
 
-    print("\nAVERAGES: \n")
+    print("AVERAGES: \n")
 
     for subject in gradebook:
         #calculate avg
@@ -112,13 +58,20 @@ def print_all_averages():
             worst_subject = subject
 
         #print avg for each subject 
-        print(subject.capitalize() + ": " + average + "%")
+        print(subject.title() + ": " + average + "%")
 
-    print("\nYour best average is " + str(best_avg) + "%, in " + best_subject.capitalize() + ".")
-    print("Your worst average is " + str(worst_avg) + "%, in " + worst_subject.capitalize() + ".")
-
+    print("\nYour best average is " + str(best_avg) + "%, in " + best_subject.title() + ".\nYour worst average is " + str(worst_avg) + "%, in " + worst_subject.title() + ".")
     nav_options()
 
+#print grades for a subject
+def print_grades(subject):
+    subject = subject.title()
+    if subject in gradebook:
+        menu(">>> In " + subject + ", you scored " + ", ".join(map(str, gradebook[subject])) + ".")
+    else:
+        menu("No grades recorded for " + subject + ".")
+
+#get cumulative GPA
 def get_GPA():
     #store averages for each subject, used to calculate gross GPA
     averages = []
@@ -133,45 +86,103 @@ def get_GPA():
     fourpointGPA = float((percentGPA / 100) * 4.0)
     return fourpointGPA
 
-def menu():
+#add grade to dictionary
+def add_grade(subject):
+    subject = subject.title()
+    if subject in gradebook:
+        grade = int_input(subject + " currently contains " + ", ".join(map(str, gradebook[subject])) + ". Enter new grade: ")
+        gradebook[subject].append(grade)
+        menu(">>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + ", ".join(map(str, gradebook[subject])) + ".")
+    else:
+        choice = smart_input("Add grade for new subject '" + subject + "'? (Y/n)")
+        if choice.lower() == "y":
+            grade = int_input("Enter grade: ")
+            gradebook[subject] = [grade]
+            menu(">>> Successfully added a " + str(grade) + " in " + subject + ".\n>>> " + subject + " now contains " + ", ".join(map(str, gradebook[subject])) + ".")
+        else:
+            menu(">>> No grade added.")
+
+#remove grade from dictionary
+def remove_grade(subject):
+    subject = subject.title()
+    if subject in gradebook:
+        grade = int_input("Enter grade to remove from " + subject + " (Options: " + ", ".join(map(str, gradebook[subject])) + "): ")
+        if grade in gradebook[subject]:
+            gradebook[subject].remove(grade)
+            menu(">>> Successfully removed a " + str(grade) + " from " + subject + ".\n>>> " + subject + " now contains " + ", ".join(map(str, gradebook[subject])) + ".")
+        else:
+            menu(">>> Grade not found in " + subject + ".")
+    else:
+        menu(">>> No grades recorded for " + subject + ".")
+
+def visualize_grades():
+    header()
+    print("LEADERBOARD:\n")
+    print("0." + "."*23 + "25" + "."*23 + "50" + "."*23 + "75" + "."*23 + "100")
+    noodle = ""
+    for subject in gradebook:
+        average = round((sum(gradebook[subject])/len(gradebook[subject])))
+        centerstring = ("\n| " + str(subject))
+        noodle += ("\n" + "-"*(average-1) + ".")
+        noodle += (centerstring + " "*len("-"*(average-len(centerstring))) + " )")
+        noodle += ("\n" + "-"*(average-1) + "`")
+    print(noodle)
+    print("\n" + "."*103)
+    nav_options()
+
+#main menu and navigation center
+def menu(message=">>>"):
     #prints menu
-    clear_console()
-    print('''
-OPTIONS:
+    header()
+    print('''OPTIONS:
 
 1. Print out classes and averages
 2. Print grades for specific class
 3. Print cumulative GPA
 4. Add a grade for a class
 5. Remove a grade from a class
-6. Exit
+6. Visualize grades
+7. Exit
 ''')
 
-    choice = int_input("Enter your choice: ")
+    print(message)
+    choice = int_input("\nEnter menu selection: ")
 
     #translates user input to corresponding function
     if choice == 1:
         print_all_averages()
     elif choice == 2:
+        print("\n>>> PRINTING GRADES <<<\n")
         subject = smart_input("Enter subject (Options: " + ", ".join(gradebook.keys()) + "): ")
         print_grades(subject)
     elif choice == 3:
-        clear_console()
-        print("Your cumulative GPA out of 4.0 is " + str(get_GPA()))
-        nav_options()
+        menu(">>> Your cumulative GPA out of 4.0 is " + str(get_GPA()))
     elif choice == 4:
+        print("\n>>> ADDING GRADE <<<\n")
         subject = smart_input("Enter subject (Options: " + ", ".join(gradebook.keys()) + "): ")
         add_grade(subject)
     elif choice == 5:
+        print("\n>>> REMOVING GRADE <<<\n")
         subject = smart_input("Enter subject (Options: " + ", ".join(gradebook.keys()) + "): ")
         remove_grade(subject)
     elif choice == 6:
+        visualize_grades()
+    elif choice == 7:
         exit_program()
     else:
-        clear_console()
-        print("\n>>> Invalid Input. Try again.\n")
-        menu()
+        menu(">>> Invalid Input. Try again.")
 
+def header():
+    clear_console()
+    print('''
+  ________  ___   ___  _______  ____  ____  __ __
+ / ___/ _ \\/ _ | / _ \\/ __/ _ )/ __ \\/ __ \\/ //_/
+/ (_ / , _/ __ |/ // / _// _  / /_/ / /_/ / ,<   
+\\___/_/|_/_/ |_/____/___/____/\\____/\\____/_/|_|
+------------------------------------------------
+''')
+
+#option to return to main menu or exit program after executing an option
 def nav_options():
     choice = int_input('''
 1. Return to main menu
@@ -183,16 +194,18 @@ Enter your choice: ''')
     elif choice == 2:
         exit_program()
     else:
-        clear_console()
+        header()
         print("\n>>> Invalid Input. Try again.\n")
         nav_options()
 
+#exits program
 def exit_program():
     clear_console()
     print("\n>>> Exited program.\n")
     write_to_csv()
     return None
 
+#handles invalid input
 def smart_input(prompt):
     while True:
         try:
@@ -201,6 +214,7 @@ def smart_input(prompt):
             print("\n>>> Invalid Input. Try again.\n")
             continue
 
+#handles invalid input for inputs meant to be integers
 def int_input(prompt):
     while True:
         try:
